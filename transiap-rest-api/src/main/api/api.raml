@@ -1,0 +1,95 @@
+#%RAML 1.0
+title: TransIAP REST API
+version: 1.0
+baseUri: http://localhost:8081/api
+mediaType: [application/json, application/xml]
+
+types:
+  EstadoTraslado:
+    enum: [disponible, asignado, entregado]
+
+/navieras:
+  /{id}:
+    /contenedores:
+      get:
+        description: Op 1. Listar contenedores de una naviera.
+        responses:
+          200:
+            body:
+              application/json:
+              application/xml:
+    /traslados:
+      get:
+        description: Op 2. Listar traslados de una naviera.
+        queryParameters:
+          entregado:
+            type: boolean
+            required: false
+            description: Filtrar si está completado (true) o no.
+        responses:
+          200:
+            body:
+              application/json:
+              application/xml:
+
+/contenedores:
+  /{id}:
+    get:
+      description: Op 3. Consultar info completa de un contenedor.
+      responses:
+        200:
+          body:
+            application/json:
+            application/xml:
+
+/traslados:
+  /{id}:
+    put:
+      description: Op 4. Cambiar estado de un traslado.
+      body:
+        application/json:
+          example: |
+            { "estado": "entregado" }
+      responses:
+        200:
+          body:
+            application/json:
+              example: |
+                { "mensaje": "Estado actualizado correctamente" }
+    
+    /ubicaciones:
+      post:
+        description: Op 5. Añadir localización GPS.
+        body:
+          application/json:
+            example: |
+              { "latitud": 39.4699, "longitud": -0.3763 }
+        responses:
+          201:
+            description: Ubicación creada.
+
+    /solicitudes:
+      post:
+        description: Op 6. Solicitar transporte para un traslado.
+        body:
+          application/json:
+            example: |
+              { "vehiculo": "1234-ABC" }
+        responses:
+          201:
+            description: Solicitud creada.
+
+/solicitudes-transporte:
+  /{id}:
+    get:
+      description: Op 7. Consultar solicitud (integra con SNTN).
+      responses:
+        200:
+          body:
+            application/json:
+            application/xml:
+    delete:
+      description: Op 8. Borrar solicitud.
+      responses:
+        200:
+          description: Solicitud eliminada.
